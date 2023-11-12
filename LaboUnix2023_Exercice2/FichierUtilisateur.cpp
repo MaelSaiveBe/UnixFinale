@@ -11,7 +11,7 @@ int estPresent(const char* nom)
   int FileDescriptor;
   int i =0;
   struct UTILISATEUR utilisateur;
-  FileDescriptor = open(FICHIER_UTILISATEURS, "O_RDONLY");
+  FileDescriptor = open(FICHIER_UTILISATEURS, O_RDONLY);
   int nUtilisateur = (int) (lseek(FileDescriptor, 0, SEEK_END)/ sizeof(struct UTILISATEUR));
   lseek(FileDescriptor, 0, SEEK_SET);
   if(FileDescriptor>0){
@@ -45,12 +45,25 @@ int hash(const char* motDePasse)
 void ajouteUtilisateur(const char* nom, const char* motDePasse)
 {
   // TO DO
+  int FileDescriptor = open(FICHIER_UTILISATEURS, O_WRONLY|O_APPEND|O_CREAT, 0760);
+  struct UTILISATEUR new_user = {nom, hash(motDePasse)};
+  write(FileDescriptor, new_user, sizeof(new_user));
+  close(FileDescriptor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 int verifieMotDePasse(int pos, const char* motDePasse)
 {
   // TO DO
+  UTILISATEUR utilisateur;
+  int FileDescriptor = open(FICHIER_UTILISATEURS, O_RDONLY);
+  if(FileDescriptor >=0){
+    lseek(FileDescriptor, sizeof(UTILISATEUR)*pos, SEEK_SET);
+    read(FileDescriptor, &utilisateur, sizeof(UTILISATEUR));
+    if(hash(motDePasse)==utilisateur.hash){
+      return 1;
+    }
+  }
   return 0;
 }
 
@@ -58,5 +71,10 @@ int verifieMotDePasse(int pos, const char* motDePasse)
 int listeUtilisateurs(UTILISATEUR *vecteur) // le vecteur doit etre suffisamment grand
 {
   // TO DO
-  return 0;
+  int i = 0;
+  int FileDescriptor = open(FICHIER_UTILISATEURS, O_RDONLY);
+  while(read(FileDescriptor, vecteur+i, sizeof(UTILISATEUR))>=sizeof(UTILISATEUR)){
+    i++;
+  }
+  return i;
 }
