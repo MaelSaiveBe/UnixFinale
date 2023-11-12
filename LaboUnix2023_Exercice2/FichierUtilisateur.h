@@ -1,6 +1,15 @@
 #ifndef FICHIER_UTILISATEUR_H
 #define FICHIER_UTILISATEUR_H
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <errno.h>
+
 #define FICHIER_UTILISATEURS "utilisateurs.dat"
 
 // Pour le fichier des utilisateurs

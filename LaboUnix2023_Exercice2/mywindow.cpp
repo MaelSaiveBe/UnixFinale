@@ -134,7 +134,27 @@ void MyWindow::on_pushButtonLogin_clicked()
   strcpy(nom,getNom());
   strcpy(motDePasse,getMotDePasse());
   nouvelUtilisateur = isNouveauChecked();
-
+  int result = estPresent(nom);
+  if(nouvelUtilisateur){
+    if(result==0){
+      ajouteUtilisateur(nom,motDePasse);
+      setResultat("Nouvel utilisateur créer : bienvenue !");
+    }else if(result!=-1){
+      setResultat("Utilisateur déjà existant !");
+    }else setResultat("pas de fichier utilisateur...");
+  }else{
+    
+    if(result >=0){
+      if(verifieMotDePasse(result, motDePasse) == 1){
+        setResultat("Rebonjour cher utilisateur !");
+      }else if(verifieMotDePasse(result, motDePasse) ==0){
+        setResultat("Mot de Passe incorrect...");
+      }else if(verifieMotDePasse(result, motDePasse) ==-1)printf("error...");
+      
+    }else if(result ==0){
+      setResultat("Utilisateur inconnu...");
+    }else setResultat("pas de fichier utilisateur...");
+  }
   // TO DO
   printf("Clic sur bouton LOGIN : --%s--%s--%d--\n",nom,motDePasse,nouvelUtilisateur);
 }
@@ -143,5 +163,7 @@ void MyWindow::on_pushButtonLogin_clicked()
 void MyWindow::on_pushButtonAfficheFichier_clicked()
 {
   // TO DO
+
+
   printf("Clic sur bouton AFFICHER\n");
 }
