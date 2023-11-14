@@ -135,16 +135,16 @@ void MyWindow::on_pushButtonLogin_clicked()
   strcpy(motDePasse,getMotDePasse());
   nouvelUtilisateur = isNouveauChecked();
   int result = estPresent(nom);
-  if(nouvelUtilisateur){
-    if(result==0){
+  if(nouvelUtilisateur ==1){
+    if(result<=0){
       ajouteUtilisateur(nom,motDePasse);
       setResultat("Nouvel utilisateur créer : bienvenue !");
-    }else if(result!=-1){
+    }else if(result>0){
       setResultat("Utilisateur déjà existant !");
-    }else setResultat("pas de fichier utilisateur...");
+    }
   }else{
     
-    if(result >=0){
+    if(result >0){
       if(verifieMotDePasse(result, motDePasse) == 1){
         setResultat("Rebonjour cher utilisateur !");
       }else if(verifieMotDePasse(result, motDePasse) ==0){
@@ -163,6 +163,13 @@ void MyWindow::on_pushButtonLogin_clicked()
 void MyWindow::on_pushButtonAfficheFichier_clicked()
 {
   // TO DO
+  videTableUtilisateurs();
+  int nUtilisateur = getNUtilisateur();
+  UTILISATEUR utilisateurs[nUtilisateur];
+  listeUtilisateurs(utilisateurs);
+  for(int i =0; i< nUtilisateur; i++){
+  ajouteTupleTableUtilisateurs(utilisateurs[i].nom, utilisateurs[i].hash);
+}
 
 
   printf("Clic sur bouton AFFICHER\n");

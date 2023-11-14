@@ -42,7 +42,7 @@ int hash(const char* motDePasse)
 void ajouteUtilisateur(const char* nom, const char* motDePasse)
 {
   // TO DO
-  int FileDescriptor = open(FICHIER_UTILISATEURS, O_WRONLY|O_APPEND|O_CREAT, 0666);
+  int FileDescriptor = open(FICHIER_UTILISATEURS, O_WRONLY|O_APPEND|O_CREAT, 00666);
   UTILISATEUR new_user;
   strcpy(new_user.nom, nom);
   new_user.hash= hash(motDePasse);
@@ -58,7 +58,7 @@ int verifieMotDePasse(int pos, const char* motDePasse)
   UTILISATEUR utilisateur;
   int FileDescriptor = open(FICHIER_UTILISATEURS, O_RDONLY);
   if(FileDescriptor >=0){
-    lseek(FileDescriptor, sizeof(UTILISATEUR)*pos, SEEK_SET);
+    lseek(FileDescriptor, sizeof(UTILISATEUR)*(pos-1), SEEK_SET);
     read(FileDescriptor, &utilisateur, sizeof(UTILISATEUR));
     //printf("%s\n",strerror(errno));
     printf("%s", utilisateur.nom);

@@ -42,4 +42,6 @@ int listeUtilisateurs(UTILISATEUR *vecteur);
 // retourne le nombre d'utilisateurs présents dans le fichier
 //          -1 si le fichier n'existe pas
 
+int getNUtilisateur();
+
 #endif
