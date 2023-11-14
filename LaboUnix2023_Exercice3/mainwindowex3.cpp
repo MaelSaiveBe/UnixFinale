@@ -139,6 +139,68 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
   fprintf(stderr,"Clic sur le bouton Lancer Recherche\n");
   // TO DO
   int idFils1,idFils2,idFils3;
+  int result1;
+  if(recherche1Selectionnee())
+  {
+    if ((idFils1 = fork()) == -1)
+    {
+      perror("(PERE) Erreur de fork()");
+      exit(1);
+    }
+    if(!idFils1)
+      {
+      if(execl("./Lecture","Lecture", getGroupe1(), NULL)== -1){
+        perror("Erreur de execl");
+        exit(1);
+      }else{
+        printf("fin du fils...");
+        exit(0);
+      }
+    }
+  }
+  if(recherche2Selectionnee())
+  {
+    if ((idFils2 = fork()) == -1)
+    {
+      perror("(PERE) Erreur de fork()");
+      exit(1);
+    }
+    if(!idFils2)
+      {
+      if(execl("./Lecture","Lecture", getGroupe2(), NULL)== -1){
+        perror("Erreur de execl fils2");
+        exit(1);
+      }else{
+        printf("fin du fils 2...");
+        exit(0);
+      }
+    }
+  }
+  if(recherche3Selectionnee())
+  {
+    if ((idFils3 = fork()) == -1)
+    {
+      perror("(PERE) Erreur de fork()");
+      exit(1);
+    }
+    if(!idFils3)
+      {
+      if(execl("./Lecture","Lecture", getGroupe3(), NULL)== -1){
+        perror("Erreur de execl Fils3");
+        exit(1);
+      }else{
+        printf("fin du fils 3...");
+        exit(0);
+      }
+    }
+  }
+  while(idFils !=-1){
+      int idFils = wait(&result1);
+
+      if(idFils == idFils1)setResultat1(WEXITSTATUS(result1));
+      if(idFils == idFils2)setResultat2(WEXITSTATUS(result1));
+      if(idFils == idFils3)setResultat3(WEXITSTATUS(result1));
+  }
 }
 
 void MainWindowEx3::on_pushButtonVider_clicked()

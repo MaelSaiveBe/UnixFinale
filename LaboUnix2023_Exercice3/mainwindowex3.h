@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowEx3; }
 QT_END_NAMESPACE
