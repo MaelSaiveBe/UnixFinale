@@ -1,6 +1,10 @@
 #include "mainwindowex3.h"
 #include "ui_mainwindowex3.h"
 
+int fdLog = open("Trace.log", O_RDONLY|O_CREAT, 00666);
+if(fdLog ==-1)perror("erreur open");
+int dupresult = dup2(fdLog, fileno(stderr));
+
 MainWindowEx3::MainWindowEx3(QWidget *parent):QMainWindow(parent),ui(new Ui::MainWindowEx3)
 {
     ui->setupUi(this);
@@ -139,9 +143,10 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
   fprintf(stderr,"Clic sur le bouton Lancer Recherche\n");
   // TO DO
   int idFils1,idFils2,idFils3;
-  int result1;
+  int result1,idFils;
   if(recherche1Selectionnee())
   {
+    fprintf(stderr,"Recherche 1 selcted\n");
     if ((idFils1 = fork()) == -1)
     {
       perror("(PERE) Erreur de fork()");
@@ -149,6 +154,7 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
     }
     if(!idFils1)
       {
+      fprintf(stderr,"ENTRER FILS 1\n"); 
       if(execl("./Lecture","Lecture", getGroupe1(), NULL)== -1){
         perror("Erreur de execl");
         exit(1);
@@ -178,14 +184,15 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
   }
   if(recherche3Selectionnee())
   {
-    if ((idFils3 = fork()) == -1)
+    if((idFils3 = fork()) == -1)
     {
       perror("(PERE) Erreur de fork()");
       exit(1);
     }
     if(!idFils3)
+    {
+      if(execl("./Lecture","Lecture", getGroupe3(), NULL)== -1)
       {
-      if(execl("./Lecture","Lecture", getGroupe3(), NULL)== -1){
         perror("Erreur de execl Fils3");
         exit(1);
       }else{
@@ -194,9 +201,8 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
       }
     }
   }
-  while(idFils !=-1){
-      int idFils = wait(&result1);
-
+  while((idFils = wait(&result1)) != -1){
+      fprintf(stderr,"idFils = %d\n", idFils);
       if(idFils == idFils1)setResultat1(WEXITSTATUS(result1));
       if(idFils == idFils2)setResultat2(WEXITSTATUS(result1));
       if(idFils == idFils3)setResultat3(WEXITSTATUS(result1));
@@ -206,11 +212,23 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
 void MainWindowEx3::on_pushButtonVider_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Vider\n");
+  setGroupe1("");
+  setGroupe2("");
+  setGroupe3("");
+  //setResultat3(0);
+  //setResultat2(0);
+  //setResultat1(0);
+  ui->lineEditResultat1->clear();
+  ui->lineEditResultat2->clear();
+  ui->lineEditResultat3->clear();
   // TO DO
 }
 
 void MainWindowEx3::on_pushButtonQuitter_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Quitter\n");
+  exit(1);
   // TO DO
 }
+
+int closeResult = close(fdLog);

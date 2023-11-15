@@ -1,7 +1,7 @@
 
 all:	UNIX_Exercice3 CreationBD Lecture
 
-UNIX_Exercice3:	main.o mainwindowex3.o moc_mainwindowex3.o
+UNIX_Exercice3:	main.o moc_mainwindowex3.o mainwindowex3.o
 	g++ -o UNIX_Exercice3 main.o mainwindowex3.o moc_mainwindowex3.o   /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
 
 moc_mainwindowex3.o:	
