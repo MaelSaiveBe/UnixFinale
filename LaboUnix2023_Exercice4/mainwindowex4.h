@@ -2,6 +2,12 @@
 #define MAINWINDOWEX4_H
 
 #include <QMainWindow>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <signal.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowEx4; }
@@ -36,6 +42,7 @@ private slots:
     void on_pushButtonAnnuler2_clicked();
     void on_pushButtonAnnuler3_clicked();
     void on_pushButtonAnnulerTous_clicked();
+
 
 private:
     Ui::MainWindowEx4 *ui;

@@ -5,6 +5,7 @@ extern MainWindowEx4 *w;
 
 int idFils1, idFils2, idFils3;
 // TO DO : HandlerSIGCHLD
+void handlerSIGCHILD(int);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,6 +17,15 @@ MainWindowEx4::MainWindowEx4(QWidget *parent):QMainWindow(parent),ui(new Ui::Mai
 
   // armement de SIGCHLD
   // TO DO
+  struct sigaction sigchild;
+  sigchild.sa_handler = handlerSIGCHILD;
+  sigchild.sa_flags=0;
+  sigemptyset(&sigchild.sa_mask);
+  if(sigaction(SIGCHLD, &sigchild, NULL)==-1)
+  {
+    perror("erreur SigAction");
+    exit(1);
+  }
 }
 
 MainWindowEx4::~MainWindowEx4()
@@ -150,7 +160,7 @@ void MainWindowEx4::on_pushButtonDemarrerTraitements_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Demarrer Traitements\n");
   // TO DO
-  if(traitement1Selectionne)
+  if(traitement1Selectionne())
   {
     fprintf(stderr, "Traitement 1 Selected");
     if ((idFils1 = fork()) == -1)
@@ -171,11 +181,58 @@ void MainWindowEx4::on_pushButtonDemarrerTraitements_clicked()
       }
     }
   }
+
+  if(traitement2Selectionne())
+  {
+    fprintf(stderr, "Traitement 1 Selected");
+    if ((idFils2 = fork()) == -1)
+    {
+      perror("(PERE) Erreur de fork()");
+      exit(1);
+    }
+    if(!idFils2)
+    {
+      fprintf(stderr,"ENTRER FILS 1\n"); 
+      if(execl("./Traitement","Traitement", getGroupe2(), "450", NULL)== -1)
+      {
+        perror("Erreur de execl");
+        exit(1);
+      }else{
+        printf("fin du fils...");
+        exit(0);
+      }
+    }
+  }
+
+  if(traitement3Selectionne())
+  {
+    fprintf(stderr, "Traitement 3 Selected");
+    if ((idFils3 = fork()) == -1)
+    {
+      perror("(PERE) Erreur de fork()");
+      exit(1);
+    }
+    if(!idFils3)
+    {
+      fprintf(stderr,"ENTRER FILS 3\n"); 
+      if(execl("./Traitement","Traitement", getGroupe3(), "700", NULL)== -1)
+      {
+        perror("Erreur de execl");
+        exit(1);
+      }else{
+        printf("fin du fils...");
+        exit(0);
+      }
+    }
+  }
 }
 
 void MainWindowEx4::on_pushButtonVider_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Vider\n");
+  setGroupe1("");
+  setGroupe2("");
+  setGroupe3("");
   // TO DO
 }
 
@@ -188,6 +245,7 @@ void MainWindowEx4::on_pushButtonQuitter_clicked()
 void MainWindowEx4::on_pushButtonAnnuler1_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Annuler1\n");
+  kill(idFils1, SIGUSR1);
   // TO DO
 }
 
@@ -195,12 +253,16 @@ void MainWindowEx4::on_pushButtonAnnuler2_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Annuler2\n");
   // TO DO
+    kill(idFils2, SIGUSR1);
+
 }
 
 void MainWindowEx4::on_pushButtonAnnuler3_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Annuler3\n");
   // TO DO
+    kill(idFils3, SIGUSR1);
+
 }
 
 void MainWindowEx4::on_pushButtonAnnulerTous_clicked()
@@ -214,3 +276,11 @@ void MainWindowEx4::on_pushButtonAnnulerTous_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // TO DO : HandlerSIGCHLD
+void handlerSIGCHILD(int sigint){
+  int id, status;
+  id = wait(&status);
+  if(id == idFils1)w->setResultat1(WEXITSTATUS(status));
+  if(id == idFils2)w->setResultat2(WEXITSTATUS(status));
+  if(id == idFils3)w->setResultat3(WEXITSTATUS(status));
+  fprintf(stderr, "signal sigCHILD recus");
+}
