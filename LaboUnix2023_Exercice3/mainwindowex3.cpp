@@ -1,13 +1,14 @@
 #include "mainwindowex3.h"
 #include "ui_mainwindowex3.h"
 
-int fdLog = open("Trace.log", O_RDONLY|O_CREAT, 00666);
-if(fdLog ==-1)perror("erreur open");
-int dupresult = dup2(fdLog, fileno(stderr));
+
+
+
 
 MainWindowEx3::MainWindowEx3(QWidget *parent):QMainWindow(parent),ui(new Ui::MainWindowEx3)
 {
     ui->setupUi(this);
+    
 }
 
 MainWindowEx3::~MainWindowEx3()
@@ -153,9 +154,10 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
       exit(1);
     }
     if(!idFils1)
-      {
+    {
       fprintf(stderr,"ENTRER FILS 1\n"); 
-      if(execl("./Lecture","Lecture", getGroupe1(), NULL)== -1){
+      if(execl("./Lecture","Lecture", getGroupe1(), NULL)== -1)
+      {
         perror("Erreur de execl");
         exit(1);
       }else{
@@ -166,6 +168,7 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
   }
   if(recherche2Selectionnee())
   {
+    fprintf(stderr,"Recherche 2 selected");
     if ((idFils2 = fork()) == -1)
     {
       perror("(PERE) Erreur de fork()");
@@ -184,6 +187,7 @@ void MainWindowEx3::on_pushButtonLancerRecherche_clicked()
   }
   if(recherche3Selectionnee())
   {
+    fprintf(stderr,"Recherche 3 selected");
     if((idFils3 = fork()) == -1)
     {
       perror("(PERE) Erreur de fork()");
@@ -227,8 +231,7 @@ void MainWindowEx3::on_pushButtonVider_clicked()
 void MainWindowEx3::on_pushButtonQuitter_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Quitter\n");
+
   exit(1);
   // TO DO
 }
-
-int closeResult = close(fdLog);
