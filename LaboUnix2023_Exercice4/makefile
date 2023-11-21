@@ -23,3 +23,7 @@ moc_mainwindowtraitement.o:
 
 Traitement:	maintraitement.o mainwindowtraitement.o moc_mainwindowtraitement.o
 	g++ -L/usr/lib64/mysql -lmysqlclient -lpthread -lz -lm -lrt -lssl -lcrypto -ldl -o Traitement maintraitement.o mainwindowtraitement.o moc_mainwindowtraitement.o /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so
+
+clean:
+	rm *.o
+	rm UNIX_Exercice4

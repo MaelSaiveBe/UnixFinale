@@ -150,6 +150,27 @@ void MainWindowEx4::on_pushButtonDemarrerTraitements_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Demarrer Traitements\n");
   // TO DO
+  if(traitement1Selectionne)
+  {
+    fprintf(stderr, "Traitement 1 Selected");
+    if ((idFils1 = fork()) == -1)
+    {
+      perror("(PERE) Erreur de fork()");
+      exit(1);
+    }
+    if(!idFils1)
+    {
+      fprintf(stderr,"ENTRER FILS 1\n"); 
+      if(execl("./Traitement","Traitement", getGroupe1(), "200", NULL)== -1)
+      {
+        perror("Erreur de execl");
+        exit(1);
+      }else{
+        printf("fin du fils...");
+        exit(0);
+      }
+    }
+  }
 }
 
 void MainWindowEx4::on_pushButtonVider_clicked()
