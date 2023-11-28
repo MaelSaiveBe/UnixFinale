@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <signal.h>
 
+
 extern WindowClient *w;
 
 #include "protocole.h" // contient la cle et la structure d'un message
@@ -27,6 +28,10 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
   // Recuperation de l'identifiant de la file de messages
   fprintf(stderr,"(CLIENT %s %d) Recuperation de l'id de la file de messages\n",nomClient,getpid());
   // TO DO (etape 2)
+  if((idQ = msgget(CLE, 0)) == -1){
+    perror("Erreur lors de la récupération de la clé");
+    exit(1);
+  }
 
   // Envoi d'une requete d'identification
   // TO DO (etape 5)
@@ -92,6 +97,21 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Envoyer\n");
   // TO DO (etapes 2, 3, 4)
+  MESSAGE msgsent;
+  strcpy(msgsent.texte, getAEnvoyer());
+  msgsent.expediteur =getpid();
+  msgsent.type = 1;
+  
+  MESSAGE msgreceived;
+
+  if(msgsnd(idQ, &msgsent, sizeof(MESSAGE) - sizeof(long),IPC_NOWAIT)== -1)
+  {
+    perror("erreur lors de l'envoie du message");
+  }
+  msgrcv(idQ,&msgreceived, sizeof(MESSAGE) - sizeof(long), 0, 0);
+  printf("I WAS HERE");
+  setRecu(msgreceived.texte);
+
 }
 
 void WindowClient::on_pushButtonQuitter_clicked()

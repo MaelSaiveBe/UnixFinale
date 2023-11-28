@@ -14,3 +14,8 @@ Client:	main windowclient moc_windowClient
 	g++ -lpthread -o Client main.o windowclient.o moc_windowclient.o /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so
 Serveur:
 	g++ Serveur.cpp -o Serveur
+
+clean:
+	rm Serveur
+	rm Client
+	rm *.o
