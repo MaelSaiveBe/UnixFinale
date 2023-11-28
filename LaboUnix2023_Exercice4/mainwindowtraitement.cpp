@@ -14,6 +14,7 @@ MYSQL_ROW  tuple;
 
 void handlerSIGALRM(int sig);
 // TO DO : HandlerSIGUSR1
+void handlerSIGUSR1(int sig);
 
 int  compteur = 0;
 
@@ -45,6 +46,11 @@ MainWindowTraitement::MainWindowTraitement(QWidget *parent):QMainWindow(parent),
 
   // armement de SIGUSR1
   // TO DO
+  struct sigaction sigUSR1;
+  sigUSR1.sa_handler = handlerSIGUSR1;
+  sigUSR1.sa_flags= 0;
+  sigemptyset(&sigUSR1.sa_mask);
+  sigaction(SIGUSR1, &sigUSR1, NULL);
 
   // Demande d'envoi de SIGALRM dans 1 seconde
   alarm(1); 
@@ -102,3 +108,7 @@ void handlerSIGALRM(int sig)
 }
 
 //TO DO : HandlerSIGUSR1
+void handlerSIGUSR1(int sig){
+  fprintf(stderr, "Traitement %d) signal SIGUSR1(%d) Recus: fin du processus \n",getpid(),sig);
+  exit(compteur);
+}

@@ -240,6 +240,7 @@ void MainWindowEx4::on_pushButtonQuitter_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Quitter\n");
   // TO DO
+  exit(1);
 }
 
 void MainWindowEx4::on_pushButtonAnnuler1_clicked()
@@ -284,3 +285,4 @@ void handlerSIGCHILD(int sigint){
   if(id == idFils3)w->setResultat3(WEXITSTATUS(status));
   fprintf(stderr, "signal sigCHILD recus");
 }
+
