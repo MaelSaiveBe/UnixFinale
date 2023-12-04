@@ -47,11 +47,13 @@ int main()
     fprintf(stderr,"(SERVEUR) Requete recue de %d : --%s--\n",requete.expediteur,requete.texte);
     //Traitement de la requete
     MESSAGE reponse;
-    reponse.expediteur = getpid();
+    reponse.expediteur = 1;
+
     char buffer[80];
     strcat(strcpy(buffer,"(SERVEUR)"), requete.texte);
+    strcpy(reponse.texte, buffer);
     reponse.type = requete.expediteur;
-    fprintf(stderr,"(SERVEUR) Envoi de la reponse a %d\n",destinataire);
+    fprintf(stderr,"(SERVEUR) Envoi de la reponse a %d\n",requete.expediteur);
     if(msgsnd(idQ, &reponse, sizeof(MESSAGE)- sizeof(long), 0) == -1)
     {
       perror("(SERVEUR) Erreur lors de l'envoie de la Reponse...\n");

@@ -97,19 +97,27 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Envoyer\n");
   // TO DO (etapes 2, 3, 4)
+  fprintf(stderr, "I Was Here 1");
   MESSAGE msgsent;
+  fprintf(stderr, "I Was Here 2");
+  if(getAEnvoyer() == NULL){
+    fprintf(stderr, "MESSAGE INVALIDE");
+    return;
+  }
   strcpy(msgsent.texte, getAEnvoyer());
   msgsent.expediteur =getpid();
+  fprintf(stderr,"(CLIENT) PID Expediteur: %d\n",msgsent.expediteur);
+  fprintf(stderr,"(CLIENT) PID Expediteur: %d\n",getpid());
   msgsent.type = 1;
-  
+  fprintf(stderr, "I Was Here 3");
   MESSAGE msgreceived;
 
   if(msgsnd(idQ, &msgsent, sizeof(MESSAGE) - sizeof(long),IPC_NOWAIT)== -1)
   {
     perror("erreur lors de l'envoie du message");
   }
-  msgrcv(idQ,&msgreceived, sizeof(MESSAGE) - sizeof(long), 0, 0);
-  printf("I WAS HERE");
+  msgrcv(idQ,&msgreceived, sizeof(MESSAGE) - sizeof(long), getpid(), 0);
+  fprintf(stderr, "I Was Here 4");
   setRecu(msgreceived.texte);
 
 }
