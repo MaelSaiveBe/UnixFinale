@@ -37,7 +37,7 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
 
   // Envoi d'une requete d'identification
   // TO DO (etape 5)
-  MESSAGE msg
+  MESSAGE msg;
   msg.type = 1;
   strcpy(msg.texte, "Identification");
   msg.expediteur = getpid();
@@ -112,9 +112,9 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
 {
   fprintf(stderr,"Clic sur le bouton Envoyer\n");
   // TO DO (etapes 2, 3, 4)
-  fprintf(stderr, "I Was Here 1");
+  
   MESSAGE msgsent;
-  fprintf(stderr, "I Was Here 2");
+  
   if(getAEnvoyer() == NULL){
     fprintf(stderr, "MESSAGE INVALIDE");
     return;
@@ -122,16 +122,14 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
   strcpy(msgsent.texte, getAEnvoyer());
   msgsent.expediteur =getpid();
   fprintf(stderr,"(CLIENT) PID Expediteur: %d\n",msgsent.expediteur);
-  fprintf(stderr,"(CLIENT) PID Expediteur: %d\n",getpid());
   msgsent.type = 1;
-  fprintf(stderr, "I Was Here 3");
   
 
   if(msgsnd(idQ, &msgsent, sizeof(MESSAGE) - sizeof(long),IPC_NOWAIT)== -1)
   {
     perror("erreur lors de l'envoie du message");
   }
-  fprintf(stderr, "I Was Here 4");
+  
 
 }
 

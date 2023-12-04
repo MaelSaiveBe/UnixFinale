@@ -7,6 +7,9 @@
 #include "protocole.h" // contient la cle et la structure d'un message
 #include <unistd.h>
 #include <cstring>
+
+void handlerSIGINT(int);
+
 int idQ;
 int pid1,pid2;
 
@@ -18,6 +21,15 @@ int main()
 
   // Armement du signal SIGINT
   // TO DO (etape 6)
+  struct sigaction sigint;
+  sigint.sa_handler = handlerSIGINT;
+  sigint.sa_flags=0;
+  sigemptyset(&sigint.sa_mask);
+  if(sigaction(SIGINT, &sigint, NULL)==-1)
+  {
+    perror("erreur SigAction (sigINT)");
+    exit(1);
+  }
 
   // Creation de la file de message
   fprintf(stderr,"(SERVEUR) Creation de la file de messages\n");
@@ -33,10 +45,10 @@ int main()
   fprintf(stderr,"(SERVEUR) Attente de connection d'un premier client...\n");
   // TO DO (etape 5)
   msgrcv(idQ, &requete, sizeof(MESSAGE)-sizeof(long), 1, 0);
-  if(pid1 != requete.expediteur)pid1 = requete.expediteur;
-  else{
-    pid2 = requete.expediteur;
-  }
+  pid1 = requete.expediteur;
+  msgrcv(idQ, &requete, sizeof(MESSAGE)-sizeof(long), 1, 0);
+
+  pid2 = requete.expediteur;
   fprintf(stderr,"(SERVEUR) Attente de connection d'un second client...\n");
   // TO DO (etape 5)
 
@@ -57,8 +69,11 @@ int main()
     char buffer[80];
     strcat(strcpy(buffer,"(SERVEUR)"), requete.texte);
     strcpy(reponse.texte, buffer);
-    reponse.type = requete.expediteur;
+
+    requete.expediteur ==pid1?reponse.type = pid2:reponse.type = pid1;
+
     fprintf(stderr,"(SERVEUR) Envoi de la reponse a %d\n",requete.expediteur);
+
     if(msgsnd(idQ, &reponse, sizeof(MESSAGE)- sizeof(long), 0) == -1)
     {
       perror("(SERVEUR) Erreur lors de l'envoie de la Reponse...\n");
@@ -73,3 +88,10 @@ int main()
 ///// Handlers de signaux ////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TO DO (etape 6)
+void handlerSIGINT(int sig){
+  struct msqid_ds buf;
+  msgctl(idQ, IPC_RMID, &buf);
+  fprintf(stderr, "msg left in q: %d", buf.msg_qnum);
+  fprintf(stderr, "handler sigINT msgctl done...");
+}
+
