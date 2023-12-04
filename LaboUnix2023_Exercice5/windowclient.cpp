@@ -17,6 +17,8 @@ extern WindowClient *w;
 extern char nomClient[40];
 int idQ; // identifiant de la file de message
 
+void handlerSIGUSR1(int sig);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +40,15 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
 
   // Armement du signal SIGUSR1
   // TO DO (etape 4)
+  struct sigaction sigUSR1;
+  sigUSR1.sa_handler = handlerSIGUSR1;
+  sigUSR1.sa_flags=0;
+  sigemptyset(&sigUSR1.sa_mask);
+  if(sigaction(SIGUSR1, &sigUSR1, NULL)==-1)
+  {
+    perror("erreur SigAction (sigUSR1)");
+    exit(1);
+  }
 }
 
 WindowClient::~WindowClient()
@@ -110,15 +121,13 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
   fprintf(stderr,"(CLIENT) PID Expediteur: %d\n",getpid());
   msgsent.type = 1;
   fprintf(stderr, "I Was Here 3");
-  MESSAGE msgreceived;
+  
 
   if(msgsnd(idQ, &msgsent, sizeof(MESSAGE) - sizeof(long),IPC_NOWAIT)== -1)
   {
     perror("erreur lors de l'envoie du message");
   }
-  msgrcv(idQ,&msgreceived, sizeof(MESSAGE) - sizeof(long), getpid(), 0);
   fprintf(stderr, "I Was Here 4");
-  setRecu(msgreceived.texte);
 
 }
 
@@ -132,3 +141,11 @@ void WindowClient::on_pushButtonQuitter_clicked()
 ///// Handlers de signaux ////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TO DO (etape 4)
+void handlerSIGUSR1(int sig){
+  MESSAGE msgreceived;
+
+  fprintf(stderr, "(CLIENT)%d signal SIGUSR1(%d) Recus: Lecture du Messages \n",getpid(),sig);
+
+  msgrcv(idQ,&msgreceived, sizeof(MESSAGE) - sizeof(long), getpid(), 0);
+  w->setRecu(msgreceived.texte);
+}

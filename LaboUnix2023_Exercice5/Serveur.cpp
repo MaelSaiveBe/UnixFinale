@@ -58,7 +58,7 @@ int main()
     {
       perror("(SERVEUR) Erreur lors de l'envoie de la Reponse...\n");
       exit(1);
-    }
+    }kill(reponse.type, SIGUSR1);
   }
 }
 
