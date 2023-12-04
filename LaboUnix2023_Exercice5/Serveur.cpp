@@ -32,6 +32,11 @@ int main()
   // Attente de connection de 2 clients
   fprintf(stderr,"(SERVEUR) Attente de connection d'un premier client...\n");
   // TO DO (etape 5)
+  msgrcv(idQ, &requete, sizeof(MESSAGE)-sizeof(long), 1, 0);
+  if(pid1 != requete.expediteur)pid1 = requete.expediteur;
+  else{
+    pid2 = requete.expediteur;
+  }
   fprintf(stderr,"(SERVEUR) Attente de connection d'un second client...\n");
   // TO DO (etape 5)
 
@@ -58,7 +63,9 @@ int main()
     {
       perror("(SERVEUR) Erreur lors de l'envoie de la Reponse...\n");
       exit(1);
-    }kill(reponse.type, SIGUSR1);
+    }
+    if(reponse.type == pid1)kill(pid1, SIGUSR1);
+    if(reponse.type == pid2)kill(pid2, SIGUSR1);
   }
 }
 

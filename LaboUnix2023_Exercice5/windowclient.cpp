@@ -37,7 +37,11 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
 
   // Envoi d'une requete d'identification
   // TO DO (etape 5)
-
+  MESSAGE msg
+  msg.type = 1;
+  strcpy(msg.texte, "Identification");
+  msg.expediteur = getpid();
+  msgsnd(idQ, &msg, sizeof(MESSAGE) - sizeof(long),IPC_NOWAIT);
   // Armement du signal SIGUSR1
   // TO DO (etape 4)
   struct sigaction sigUSR1;
